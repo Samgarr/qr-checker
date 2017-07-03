@@ -1,9 +1,13 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         tools:context="cz.lhoracek.qrchecker.MainActivity">
 
     <data>
 
+        <variable
+            name="qrListener"
+            type="com.dlazaro66.qrcodereaderview.QRCodeReaderView.OnQRCodeReadListener"/>
     </data>
 
     <FrameLayout
@@ -14,7 +18,12 @@
         <com.dlazaro66.qrcodereaderview.QRCodeReaderView
             android:id="@+id/qrdecoderview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            app:listener="@{qrListener}"/>
+
+        <cz.lhoracek.qrchecker.PointsOverlayView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
         <TextView
             android:id="@+id/fullscreen_content"
@@ -26,34 +35,6 @@
             android:textColor="#33b5e5"
             android:textSize="50sp"
             android:textStyle="bold"/>
-
-        <!-- This FrameLayout insets its children based on system windows using
-             android:fitsSystemWindows. -->
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fitsSystemWindows="true">
-
-            <LinearLayout
-                android:id="@+id/fullscreen_content_controls"
-                style="?metaButtonBarStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center_horizontal"
-                android:background="@color/black_overlay"
-                android:orientation="horizontal"
-                tools:ignore="UselessParent">
-
-                <Button
-                    android:id="@+id/dummy_button"
-                    style="?metaButtonBarButtonStyle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/dummy_button"/>
-
-            </LinearLayout>
-        </FrameLayout>
 
     </FrameLayout>
 </layout>
