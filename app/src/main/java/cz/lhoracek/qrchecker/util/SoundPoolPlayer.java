@@ -7,11 +7,9 @@ import android.media.SoundPool;
 import android.support.annotation.RawRes;
 import android.util.SparseArray;
 
-import java.util.HashMap;
-
 import javax.inject.Inject;
 
-import cz.lhoracek.qrchecker.R;
+import cz.lhoracek.qrchecker.di.ApplicationContext;
 
 public class SoundPoolPlayer {
     private SoundPool mShortPlayer = null;
@@ -19,8 +17,8 @@ public class SoundPoolPlayer {
     private Context context;
 
     @Inject
-    public SoundPoolPlayer(Context pContext) {
-        this.context = pContext;
+    public SoundPoolPlayer(@ApplicationContext Context context) {
+        this.context = context;
         this.mShortPlayer = new SoundPool(4, AudioManager.STREAM_MUSIC, 0);
     }
 

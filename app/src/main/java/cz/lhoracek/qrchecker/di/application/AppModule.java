@@ -1,4 +1,4 @@
-package cz.lhoracek.qrchecker.di;
+package cz.lhoracek.qrchecker.di.application;
 
 
 import android.content.Context;
@@ -8,6 +8,7 @@ import java.util.Properties;
 
 import javax.inject.Singleton;
 
+import cz.lhoracek.qrchecker.di.ApplicationContext;
 import cz.lhoracek.qrchecker.util.Preferences;
 import dagger.Module;
 import dagger.Provides;
@@ -21,6 +22,7 @@ public class AppModule {
     }
 
     @Provides
+    @ApplicationContext
     public Context provideContext() {
         return appContext;
     }

@@ -1,6 +1,8 @@
 package cz.lhoracek.qrchecker.screens.home;
 
 
+import android.content.Context;
+import android.content.Intent;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
@@ -15,6 +17,8 @@ import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
 import javax.inject.Inject;
 
 import cz.lhoracek.qrchecker.R;
+import cz.lhoracek.qrchecker.di.ActivityContext;
+import cz.lhoracek.qrchecker.screens.settings.SettingsActivity;
 import cz.lhoracek.qrchecker.util.SoundPoolPlayer;
 
 
@@ -26,11 +30,15 @@ public class MainViewModel {
 
     private final Vibrator vibrator;
     private final SoundPoolPlayer soundPoolPlayer;
+    private final Context activityContext;
 
     @Inject
-    public MainViewModel(Vibrator vibrator, SoundPoolPlayer soundPoolPlayer) {
+    public MainViewModel(Vibrator vibrator,
+                         SoundPoolPlayer soundPoolPlayer,
+                         @ActivityContext Context activityContext) {
         this.vibrator = vibrator;
         this.soundPoolPlayer = soundPoolPlayer;
+        this.activityContext = activityContext;
     }
 
     public ObservableField<PointF[]> getPoints() {
@@ -77,6 +85,10 @@ public class MainViewModel {
             handler.removeCallbacks(clearPoints);
             handler.postDelayed(clearPoints, 500);
         };
+    }
+
+    public View.OnClickListener getFabListener(){
+        return v -> activityContext.startActivity(new Intent(activityContext, SettingsActivity.class));
     }
 
     String lastText = null;

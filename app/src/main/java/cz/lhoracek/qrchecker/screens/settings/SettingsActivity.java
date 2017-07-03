@@ -27,9 +27,10 @@ import javax.inject.Named;
 import cz.lhoracek.qrchecker.App;
 import cz.lhoracek.qrchecker.R;
 import cz.lhoracek.qrchecker.databinding.ActivitySettingsBinding;
+import cz.lhoracek.qrchecker.screens.BaseActivity;
 import timber.log.Timber;
 
-public class SettingActivity extends Activity {
+public class SettingsActivity extends BaseActivity {
     public static final int REQUEST_CODE = 987651;
 
     @Inject SettingsViewModel viewModel;
@@ -38,7 +39,7 @@ public class SettingActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ((App) getApplication()).getAppComponent().inject(this);
+        getActivityComponent().inject(this);
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_settings);
     }

@@ -16,13 +16,14 @@ import javax.inject.Inject;
 import cz.lhoracek.qrchecker.App;
 import cz.lhoracek.qrchecker.R;
 import cz.lhoracek.qrchecker.databinding.ActivityMainBinding;
+import cz.lhoracek.qrchecker.screens.BaseActivity;
 import timber.log.Timber;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private ActivityMainBinding binding;
 
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ((App) getApplication()).getAppComponent().inject(this);
+        getActivityComponent().inject(this);
         super.onCreate(savedInstanceState);
         checkPermission();
 
