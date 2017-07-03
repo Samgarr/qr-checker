@@ -35,6 +35,7 @@
             android:layout_height="match_parent"
             android:visibility="@{viewModel.valid != null ? View.VISIBLE : View.GONE}"
             app:srcCompat="@drawable/ic_check_24dp"
+            android:rotation="@{-viewModel.rotation}"
             />
 
     </FrameLayout>

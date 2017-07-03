@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.OrientationEventListener;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,7 +35,7 @@ import timber.log.Timber;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class MainActivity extends AppCompatActivity implements SensorEventListener {
+public class MainActivity extends AppCompatActivity {
     private static final int FROM_RADS_TO_DEGS = -57;
     private static final int SENSOR_DELAY = 500 * 1000; // 500ms
 
@@ -51,43 +52,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         mBinding.setViewModel(viewModel);
 
+        new OrientationEventListener(this, SensorManager.SENSOR_DELAY_UI) {
+            @Override
+            public void onOrientationChanged(int orientation) {
+                Timber.d("Orientation changed %d", orientation);
+                viewModel.getRotation().set(((orientation+45)/90)*90);
 
-        mSensorManager = (SensorManager) getSystemService(Activity.SENSOR_SERVICE);
-        mRotationSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-        mSensorManager.registerListener(this, mRotationSensor, SENSOR_DELAY);
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        if (event.sensor == mRotationSensor) {
-            if (event.values.length > 4) {
-                float[] truncatedRotationVector = new float[4];
-                System.arraycopy(event.values, 0, truncatedRotationVector, 0, 4);
-                update(truncatedRotationVector);
-            } else {
-                update(event.values);
             }
-        }
-    }
-
-    private void update(float[] vectors) {
-        float[] rotationMatrix = new float[9];
-        SensorManager.getRotationMatrixFromVector(rotationMatrix, vectors);
-        int worldAxisX = SensorManager.AXIS_X;
-        int worldAxisZ = SensorManager.AXIS_Z;
-        float[] adjustedRotationMatrix = new float[9];
-        SensorManager.remapCoordinateSystem(rotationMatrix, worldAxisX, worldAxisZ, adjustedRotationMatrix);
-        float[] orientation = new float[3];
-        SensorManager.getOrientation(adjustedRotationMatrix, orientation);
-        float pitch = orientation[1] * FROM_RADS_TO_DEGS;
-        float roll = orientation[2] * FROM_RADS_TO_DEGS;
-        Timber.d("Pitch : %d" + pitch);
-        Timber.d("Roll : %d" + pitch);
+        }.enable();
     }
 
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 234567;

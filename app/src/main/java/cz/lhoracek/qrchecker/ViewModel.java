@@ -15,7 +15,7 @@ import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
 public class ViewModel implements QRCodeReaderView.OnQRCodeReadListener, View.OnTouchListener {
     ObservableField<PointF[]> points = new ObservableField<>();
     ObservableInt rotation = new ObservableInt(0);
-    ObservableField<Boolean> valid = new ObservableField<>();
+    ObservableField<Boolean> valid = new ObservableField<>(true); // TODO remove
     ObservableBoolean torch = new ObservableBoolean(false);
 
     public ObservableField<PointF[]> getPoints() {

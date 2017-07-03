@@ -48,6 +48,7 @@ dependencies {
     implementation "com.google.dagger:dagger:${daggerVersion}"
     annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
     implementation 'com.jakewharton.timber:timber:4.5.1'
+    implementation "com.nbsp:library:1.6"
 
     implementation "com.dlazaro66.qrcodereaderview:qrcodereaderview:${qreaderVersion}"
 
