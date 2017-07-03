@@ -5,36 +5,37 @@
 
     <data>
 
+        <import type="android.view.View"/>
+
         <variable
-            name="qrListener"
-            type="com.dlazaro66.qrcodereaderview.QRCodeReaderView.OnQRCodeReadListener"/>
+            name="viewModel"
+            type="cz.lhoracek.qrchecker.ViewModel"/>
     </data>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#0099cc">
+        android:background="#0099cc"
+        android:onTouch="@{viewModel}">
 
         <com.dlazaro66.qrcodereaderview.QRCodeReaderView
             android:id="@+id/qrdecoderview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:listener="@{qrListener}"/>
+            app:listener="@{viewModel}"
+            app:torch="@{viewModel.torch}"/>
 
         <cz.lhoracek.qrchecker.PointsOverlayView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            app:points="@{viewModel.points}"/>
 
-        <TextView
-            android:id="@+id/fullscreen_content"
+        <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:keepScreenOn="true"
-            android:text="@string/dummy_content"
-            android:textColor="#33b5e5"
-            android:textSize="50sp"
-            android:textStyle="bold"/>
+            android:visibility="@{viewModel.valid != null ? View.VISIBLE : View.GONE}"
+            app:srcCompat="@drawable/ic_check_24dp"
+            />
 
     </FrameLayout>
 </layout>

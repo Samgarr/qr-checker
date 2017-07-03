@@ -33,38 +33,33 @@ import timber.log.Timber;
  */
 public class MainActivity extends AppCompatActivity implements QRCodeReaderView.OnQRCodeReadListener {
 
-    private static final boolean AUTO_HIDE = true;
-    private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
-    private static final int AUTO_HIDE_START_DELAY_MILLIS = 200;
-
-
     private ActivityMainBinding mBinding;
+    private ViewModel viewModel = new ViewModel();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         checkPermission();
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        mBinding.setQrListener(this);
+        mBinding.setViewModel(viewModel);
 
 
         SensorManager sensorManager = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
         sensorManager.registerListener(new SensorEventListener() {
-            int orientation=-1;
+            int orientation = -1;
 
             @Override
             public void onSensorChanged(SensorEvent event) {
-                if (event.values[1]<6.5 && event.values[1]>-6.5) {
-                    if (orientation!=1) {
-                       Timber.d("Sensor Landscape");
+                if (event.values[1] < 6.5 && event.values[1] > -6.5) {
+                    if (orientation != 1) {
+                        Timber.d("Sensor Landscape");
                     }
-                    orientation=1;
+                    orientation = 1;
                 } else {
-                    if (orientation!=0) {
+                    if (orientation != 0) {
                         Timber.d("Sensor Portrait");
                     }
-                    orientation=0;
+                    orientation = 0;
                 }
             }
 
@@ -109,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements QRCodeReaderView.
     @Override
     public void onQRCodeRead(String text, PointF[] points) {
         Timber.d("QrCode read %s", text);
+        viewModel.getPoints().set(points);
     }
 
     @Override

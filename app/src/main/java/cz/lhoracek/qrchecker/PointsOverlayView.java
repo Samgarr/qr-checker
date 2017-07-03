@@ -31,7 +31,7 @@ public class PointsOverlayView extends View {
 
     private void init() {
         paint = new Paint();
-        paint.setColor(Color.YELLOW);
+        paint.setColor(Color.RED);
         paint.setStyle(Paint.Style.FILL);
     }
 
@@ -44,7 +44,7 @@ public class PointsOverlayView extends View {
         super.draw(canvas);
         if (points != null) {
             for (PointF pointF : points) {
-                canvas.drawCircle(pointF.x, pointF.y, 10, paint);
+                canvas.drawCircle(pointF.x, pointF.y, 20, paint);
             }
         }
     }
