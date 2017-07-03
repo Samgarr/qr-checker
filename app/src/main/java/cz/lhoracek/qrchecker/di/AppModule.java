@@ -21,6 +21,11 @@ public class AppModule {
     }
 
     @Provides
+    public Context provideContext() {
+        return appContext;
+    }
+
+    @Provides
     public Vibrator provideVibrator() {
         return (Vibrator) appContext.getSystemService(Context.VIBRATOR_SERVICE);
     }

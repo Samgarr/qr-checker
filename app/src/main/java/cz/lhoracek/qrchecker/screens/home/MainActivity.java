@@ -73,4 +73,17 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        viewModel.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        viewModel.onPause();
+    }
 }

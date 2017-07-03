@@ -14,6 +14,9 @@ import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
 
 import javax.inject.Inject;
 
+import cz.lhoracek.qrchecker.R;
+import cz.lhoracek.qrchecker.util.SoundPoolPlayer;
+
 
 public class MainViewModel {
     ObservableField<PointF[]> points = new ObservableField<>();
@@ -22,10 +25,12 @@ public class MainViewModel {
     ObservableBoolean torch = new ObservableBoolean(false);
 
     private final Vibrator vibrator;
+    private final SoundPoolPlayer soundPoolPlayer;
 
     @Inject
-    public MainViewModel(Vibrator vibrator) {
+    public MainViewModel(Vibrator vibrator, SoundPoolPlayer soundPoolPlayer) {
         this.vibrator = vibrator;
+        this.soundPoolPlayer = soundPoolPlayer;
     }
 
     public ObservableField<PointF[]> getPoints() {
@@ -64,6 +69,8 @@ public class MainViewModel {
             if (!text.equals(lastText)) {
                 // TODO update
                 valid.set(true);
+                vibrator.vibrate(250);
+                soundPoolPlayer.playShortResource(R.raw.ok);
                 handler.postDelayed(clearValid, 1000);
             }
             this.lastText = text;
@@ -76,4 +83,15 @@ public class MainViewModel {
     Runnable clearPoints = () -> points.set(null);
     Runnable clearValid = () -> valid.set(null);
     Handler handler = new Handler();
+
+    public void onResume() {
+        soundPoolPlayer.loadSound(R.raw.ok);
+        soundPoolPlayer.loadSound(R.raw.fail);
+    }
+
+    public void onPause() {
+        soundPoolPlayer.unloadSound(R.raw.ok);
+        soundPoolPlayer.unloadSound(R.raw.fail);
+    }
+
 }
