@@ -1,30 +1,72 @@
-apply plugin: 'com.android.application'
+apply plugin: "com.android.application"
+
+ext {
+    minSdk = 19
+    targetSdk = 25
+    buildToolsVersion = "26.0.0"
+    autoValueVersion = "1.4.1"
+    daggerVersion = "2.11"
+    supportLibVersion = "25.4.0"
+    retrofitVersion = "2.3.0"
+    retrofitVersion = "2.3.0"
+    qreaderVersion = "2.0.2"
+}
+
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "26.0.0"
+    buildToolsVersion project.ext.buildToolsVersion
     defaultConfig {
         applicationId "cz.lhoracek.qrchecker"
-        minSdkVersion 19
-        targetSdkVersion 26
+        minSdkVersion project.ext.minSdk
+        targetSdkVersion project.ext.targetSdk
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+        }
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
+    }
+    dataBinding {
+        enabled = true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
+
+    implementation "com.google.dagger:dagger:${daggerVersion}"
+    annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
+    implementation 'com.jakewharton.timber:timber:4.5.1'
+
+    implementation "com.dlazaro66.qrcodereaderview:qrcodereaderview:${qreaderVersion}"
+
+    implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
+    implementation "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
+    implementation "com.squareup.retrofit2:adapter-rxjava:${retrofitVersion}"
+    implementation "com.squareup.okhttp3:logging-interceptor:3.2.0"
+
+    //autovalue
+    compileOnly "com.google.auto.value:auto-value:$autoValueVersion"
+    annotationProcessor "com.google.auto.value:auto-value:$autoValueVersion"
+    annotationProcessor 'com.ryanharter.auto.value:auto-value-parcel:0.2.5'
+    implementation 'com.ryanharter.auto.value:auto-value-parcel-adapter:0.2.5'
+    annotationProcessor 'com.ryanharter.auto.value:auto-value-gson:0.4.6'
+    compileOnly 'com.ryanharter.auto.value:auto-value-gson:0.4.6'
+
+    androidTestImplementation("com.android.support.test.espresso:espresso-core:2.2.2", {
+        exclude group: "com.android.support", module: "support-annotations"
     })
-    implementation 'com.android.support:appcompat-v7:25.4.0'
-    testImplementation 'junit:junit:4.12'
-    implementation 'com.android.support:support-v4:25.4.0'
+    implementation "com.android.support:appcompat-v7:${supportLibVersion}"
+    testImplementation "junit:junit:4.12"
+    implementation "com.android.support:support-v4:${supportLibVersion}"
 }
