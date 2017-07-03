@@ -1,7 +1,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        tools:context="cz.lhoracek.qrchecker.MainActivity">
+        tools:context=".screens.home.MainActivity">
 
     <data>
 
@@ -9,34 +9,48 @@
 
         <variable
             name="viewModel"
-            type="cz.lhoracek.qrchecker.ViewModel"/>
+            type="cz.lhoracek.qrchecker.screens.home.MainViewModel"/>
     </data>
 
-    <FrameLayout
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#0099cc"
-        android:onTouch="@{viewModel}">
+        android:layout_height="match_parent">
 
-        <com.dlazaro66.qrcodereaderview.QRCodeReaderView
-            android:id="@+id/qrdecoderview"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:listener="@{viewModel}"
-            app:torch="@{viewModel.torch}"/>
+            android:background="#0099cc"
+            android:onTouch="@{viewModel.screenTouchListener}">
 
-        <cz.lhoracek.qrchecker.PointsOverlayView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:points="@{viewModel.points}"/>
+            <com.dlazaro66.qrcodereaderview.QRCodeReaderView
+                android:id="@+id/qrdecoderview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:listener="@{viewModel.qrCodeListener}"
+                app:torch="@{viewModel.torch}"/>
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="@{viewModel.valid != null ? View.VISIBLE : View.GONE}"
-            app:srcCompat="@drawable/ic_check_24dp"
-            android:rotation="@{-viewModel.rotation}"
-            />
+            <cz.lhoracek.qrchecker.PointsOverlayView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:points="@{viewModel.points}"/>
 
-    </FrameLayout>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:rotation="@{-viewModel.rotation}"
+                android:visibility="@{viewModel.valid != null ? View.VISIBLE : View.GONE}"
+                app:srcCompat="@drawable/ic_check_24dp"
+                />
+
+        </FrameLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="16dp"
+            android:tint="@color/white"
+            app:fabSize="normal"
+            app:srcCompat="@drawable/ic_settings_24dp"/>
+    </android.support.design.widget.CoordinatorLayout>
 </layout>
