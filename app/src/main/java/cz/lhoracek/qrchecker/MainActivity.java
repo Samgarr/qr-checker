@@ -2,6 +2,7 @@ package cz.lhoracek.qrchecker;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
@@ -21,6 +22,8 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
 
@@ -31,10 +34,15 @@ import timber.log.Timber;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class MainActivity extends AppCompatActivity implements QRCodeReaderView.OnQRCodeReadListener {
+public class MainActivity extends AppCompatActivity implements SensorEventListener {
+    private static final int FROM_RADS_TO_DEGS = -57;
+    private static final int SENSOR_DELAY = 500 * 1000; // 500ms
 
     private ActivityMainBinding mBinding;
     private ViewModel viewModel = new ViewModel();
+
+    SensorManager mSensorManager;
+    Sensor mRotationSensor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,31 +52,42 @@ public class MainActivity extends AppCompatActivity implements QRCodeReaderView.
         mBinding.setViewModel(viewModel);
 
 
-        SensorManager sensorManager = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
-        sensorManager.registerListener(new SensorEventListener() {
-            int orientation = -1;
+        mSensorManager = (SensorManager) getSystemService(Activity.SENSOR_SERVICE);
+        mRotationSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+        mSensorManager.registerListener(this, mRotationSensor, SENSOR_DELAY);
+    }
 
-            @Override
-            public void onSensorChanged(SensorEvent event) {
-                if (event.values[1] < 6.5 && event.values[1] > -6.5) {
-                    if (orientation != 1) {
-                        Timber.d("Sensor Landscape");
-                    }
-                    orientation = 1;
-                } else {
-                    if (orientation != 0) {
-                        Timber.d("Sensor Portrait");
-                    }
-                    orientation = 0;
-                }
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor == mRotationSensor) {
+            if (event.values.length > 4) {
+                float[] truncatedRotationVector = new float[4];
+                System.arraycopy(event.values, 0, truncatedRotationVector, 0, 4);
+                update(truncatedRotationVector);
+            } else {
+                update(event.values);
             }
+        }
+    }
 
-            @Override
-            public void onAccuracyChanged(Sensor sensor, int accuracy) {
-                // TODO Auto-generated method stub
-
-            }
-        }, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME);
+    private void update(float[] vectors) {
+        float[] rotationMatrix = new float[9];
+        SensorManager.getRotationMatrixFromVector(rotationMatrix, vectors);
+        int worldAxisX = SensorManager.AXIS_X;
+        int worldAxisZ = SensorManager.AXIS_Z;
+        float[] adjustedRotationMatrix = new float[9];
+        SensorManager.remapCoordinateSystem(rotationMatrix, worldAxisX, worldAxisZ, adjustedRotationMatrix);
+        float[] orientation = new float[3];
+        SensorManager.getOrientation(adjustedRotationMatrix, orientation);
+        float pitch = orientation[1] * FROM_RADS_TO_DEGS;
+        float roll = orientation[2] * FROM_RADS_TO_DEGS;
+        Timber.d("Pitch : %d" + pitch);
+        Timber.d("Roll : %d" + pitch);
     }
 
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 234567;
@@ -99,17 +118,5 @@ public class MainActivity extends AppCompatActivity implements QRCodeReaderView.
                 return;
             }
         }
-    }
-
-    @Override
-    public void onQRCodeRead(String text, PointF[] points) {
-        Timber.d("QrCode read %s", text);
-        viewModel.getPoints().set(points);
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        Timber.d("Configuration changed :  %s", newConfig.orientation == Configuration.ORIENTATION_PORTRAIT ? "Portrait" : "Landscape");
     }
 }
