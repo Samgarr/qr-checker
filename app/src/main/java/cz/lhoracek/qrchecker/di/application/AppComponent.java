@@ -7,8 +7,6 @@ import android.os.Vibrator;
 import javax.inject.Singleton;
 
 import cz.lhoracek.qrchecker.di.ApplicationContext;
-import cz.lhoracek.qrchecker.screens.home.MainActivity;
-import cz.lhoracek.qrchecker.screens.settings.SettingsActivity;
 import cz.lhoracek.qrchecker.util.Preferences;
 import dagger.Component;
 

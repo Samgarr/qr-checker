@@ -18,7 +18,7 @@ import javax.inject.Inject;
 
 import cz.lhoracek.qrchecker.R;
 import cz.lhoracek.qrchecker.di.ActivityContext;
-import cz.lhoracek.qrchecker.screens.settings.SettingsActivity;
+import cz.lhoracek.qrchecker.screens.settings.ListActivity;
 import cz.lhoracek.qrchecker.util.SoundPoolPlayer;
 
 
@@ -88,7 +88,7 @@ public class MainViewModel {
     }
 
     public View.OnClickListener getFabListener(){
-        return v -> activityContext.startActivity(new Intent(activityContext, SettingsActivity.class));
+        return v -> activityContext.startActivity(new Intent(activityContext, ListActivity.class));
     }
 
     String lastText = null;

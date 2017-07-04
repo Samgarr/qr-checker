@@ -27,7 +27,7 @@
         </activity>
 
         <activity
-            android:name=".screens.settings.SettingsActivity"
+            android:name=".screens.settings.ListActivity"
             android:label="@string/activity_settings"
             android:parentActivityName=".screens.home.MainActivity"/>
     </application>

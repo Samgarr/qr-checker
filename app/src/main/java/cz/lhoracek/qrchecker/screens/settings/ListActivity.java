@@ -7,10 +7,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.nbsp.materialfilepicker.MaterialFilePicker;
 import com.nbsp.materialfilepicker.ui.FilePickerActivity;
-
-import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
@@ -19,10 +16,10 @@ import cz.lhoracek.qrchecker.databinding.ActivitySettingsBinding;
 import cz.lhoracek.qrchecker.screens.BaseActivity;
 import timber.log.Timber;
 
-public class SettingsActivity extends BaseActivity {
+public class ListActivity extends BaseActivity {
     public static final int REQUEST_CODE = 987651;
 
-    @Inject SettingsViewModel viewModel;
+    @Inject ListViewModel viewModel;
 
     ActivitySettingsBinding binding;
 
@@ -30,17 +27,7 @@ public class SettingsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         getActivityComponent().inject(this);
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_settings);
-    }
-
-    public void startPicker() {
-        new MaterialFilePicker()
-                .withActivity(this)
-                .withRequestCode(REQUEST_CODE)
-                .withFilter(Pattern.compile(".*\\.csv$")) // Filtering files and directories by file name using regexp
-                //.withFilterDirectories(true) // Set directories filterable (false by default)
-                //.withHiddenFiles(true) // Show hidden files and folders
-                .start();
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_list);
     }
 
     @Override
@@ -53,7 +40,7 @@ public class SettingsActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_pick_file:
-                viewModel.onSelectFile();
+                viewModel.onStartPicker();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
