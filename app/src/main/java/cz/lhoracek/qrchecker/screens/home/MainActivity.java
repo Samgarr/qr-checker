@@ -44,17 +44,14 @@ public class MainActivity extends BaseActivity {
         getActivityComponent().inject(this);
         super.onCreate(savedInstanceState);
         checkPermission();
-
+        viewModel.onCreate();
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.setViewModel(viewModel);
-
         initOrientationListener();
-
-        viewModel.onCreate();
     }
 
     private void initOrientationListener(){
-        new OrientationEventListener(this, SensorManager.SENSOR_DELAY_UI) {
+        new OrientationEventListener(this, SensorManager.SENSOR_DELAY_NORMAL) {
             @Override
             public void onOrientationChanged(int orientation) {
                 Timber.d("Orientation changed %d", orientation);

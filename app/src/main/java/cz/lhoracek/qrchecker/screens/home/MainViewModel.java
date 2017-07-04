@@ -15,12 +15,15 @@ import android.view.View;
 
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
 
+import java.io.File;
+
 import javax.inject.Inject;
 
 import cz.lhoracek.qrchecker.R;
 import cz.lhoracek.qrchecker.di.ActivityContext;
 import cz.lhoracek.qrchecker.screens.BaseViewModel;
 import cz.lhoracek.qrchecker.screens.list.ListActivity;
+import cz.lhoracek.qrchecker.util.Preferences;
 import cz.lhoracek.qrchecker.util.SoundPoolPlayer;
 
 
@@ -34,16 +37,19 @@ public class MainViewModel extends BaseViewModel {
     private final SoundPoolPlayer soundPoolPlayer;
     private final Context activityContext;
     private final AudioManager audioManager;
+    private final Preferences preferences;
 
     @Inject
     public MainViewModel(Vibrator vibrator,
                          SoundPoolPlayer soundPoolPlayer,
                          @ActivityContext Context activityContext,
-                         AudioManager audioManager) {
+                         AudioManager audioManager,
+                         Preferences preferences) {
         this.vibrator = vibrator;
         this.soundPoolPlayer = soundPoolPlayer;
         this.activityContext = activityContext;
         this.audioManager = audioManager;
+        this.preferences = preferences;
     }
 
     public ObservableField<PointF[]> getPoints() {
@@ -99,10 +105,20 @@ public class MainViewModel extends BaseViewModel {
     @Override
     public void onCreate() {
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC),0);
+        if(preferences.getFilename() == null){
+           startFilePicker();
+        }else if(!new File(preferences.getFilename()).exists()){
+            preferences.setFilename(null);
+            startFilePicker();
+        }
+    }
+
+    private void startFilePicker(){
+        activityContext.startActivity(new Intent(activityContext, ListActivity.class));
     }
 
     public View.OnClickListener getFabListener(){
-        return v -> activityContext.startActivity(new Intent(activityContext, ListActivity.class));
+        return v -> startFilePicker();
     }
 
     String lastText = null;

@@ -17,7 +17,7 @@ import cz.lhoracek.qrchecker.screens.BaseActivity;
 import timber.log.Timber;
 
 public class ListActivity extends BaseActivity {
-    public static final int REQUEST_CODE = 987651;
+    public static final int REQUEST_CODE = 1;
 
     @Inject ListViewModel viewModel;
 
