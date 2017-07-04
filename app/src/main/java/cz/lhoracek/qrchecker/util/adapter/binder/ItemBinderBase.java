@@ -1,7 +1,6 @@
 package cz.lhoracek.qrchecker.util.adapter.binder;
 
-
-import my.com.iflix.core.ui.bindings.recyclerview.ItemBinder;
+import cz.lhoracek.qrchecker.util.adapter.handler.ItemBinder;
 
 /**
  * Base binder just represents tuple of layoutId and variable inside it, that expects the adapter item.

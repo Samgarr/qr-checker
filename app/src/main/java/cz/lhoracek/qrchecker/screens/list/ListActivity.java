@@ -1,4 +1,4 @@
-package cz.lhoracek.qrchecker.screens.settings;
+package cz.lhoracek.qrchecker.screens.list;
 
 
 import android.content.Intent;
@@ -12,7 +12,7 @@ import com.nbsp.materialfilepicker.ui.FilePickerActivity;
 import javax.inject.Inject;
 
 import cz.lhoracek.qrchecker.R;
-import cz.lhoracek.qrchecker.databinding.ActivitySettingsBinding;
+import cz.lhoracek.qrchecker.databinding.ActivityListBinding;
 import cz.lhoracek.qrchecker.screens.BaseActivity;
 import timber.log.Timber;
 
@@ -21,13 +21,14 @@ public class ListActivity extends BaseActivity {
 
     @Inject ListViewModel viewModel;
 
-    ActivitySettingsBinding binding;
+    ActivityListBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getActivityComponent().inject(this);
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_list);
+        viewModel.onCreate();
     }
 
     @Override
@@ -40,7 +41,7 @@ public class ListActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_pick_file:
-                viewModel.onStartPicker();
+                viewModel.onOptionsItemSelected();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

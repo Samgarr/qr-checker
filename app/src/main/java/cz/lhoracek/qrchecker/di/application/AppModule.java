@@ -2,6 +2,7 @@ package cz.lhoracek.qrchecker.di.application;
 
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.os.Vibrator;
 
 import java.util.Properties;
@@ -33,8 +34,13 @@ public class AppModule {
     }
 
     @Provides
+    public AudioManager provideAudioManager(){
+        return (AudioManager) appContext.getSystemService(Context.AUDIO_SERVICE);
+    }
+
+    @Provides
     @Singleton
     public Preferences providePreferences() {
-        return new Preferences();
+        return new Preferences(appContext);
     }
 }

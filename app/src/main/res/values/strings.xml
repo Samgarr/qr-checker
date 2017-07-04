@@ -3,4 +3,7 @@
 
     <string name="action_pick_file">Select file</string>
     <string name="activity_settings">Settings</string>
+
+    <string name="permission_title">Camera &amp; Storage</string>
+    <string name="permission_text">Both camera and external storage permission are needed for app to work correctly</string>
 </resources>

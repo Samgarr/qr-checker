@@ -9,7 +9,7 @@
 
         <variable
             name="viewModel"
-            type="cz.lhoracek.qrchecker.screens.settings.ListViewModel"/>
+            type="cz.lhoracek.qrchecker.screens.list.ListViewModel"/>
     </data>
 
     <android.support.design.widget.CoordinatorLayout

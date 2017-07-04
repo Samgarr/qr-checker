@@ -1,6 +1,6 @@
 package cz.lhoracek.qrchecker.util.adapter.binder;
 
-import my.com.iflix.core.ui.bindings.recyclerview.ItemBinder;
+import cz.lhoracek.qrchecker.util.adapter.handler.ItemBinder;
 
 /**
  * Takes list of ConditionalItemBidenrs and asks each of them in order as they are defined if it can hadle the itemType. At lease one of the

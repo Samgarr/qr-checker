@@ -4,7 +4,7 @@ package cz.lhoracek.qrchecker.di.activity;
 import cz.lhoracek.qrchecker.di.PerActivity;
 import cz.lhoracek.qrchecker.di.application.AppComponent;
 import cz.lhoracek.qrchecker.screens.home.MainActivity;
-import cz.lhoracek.qrchecker.screens.settings.ListActivity;
+import cz.lhoracek.qrchecker.screens.list.ListActivity;
 import dagger.Component;
 
 @PerActivity

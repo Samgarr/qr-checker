@@ -4,6 +4,8 @@
 
 
     <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".App"
@@ -27,7 +29,7 @@
         </activity>
 
         <activity
-            android:name=".screens.settings.ListActivity"
+            android:name=".screens.list.ListActivity"
             android:label="@string/activity_settings"
             android:parentActivityName=".screens.home.MainActivity"/>
     </application>

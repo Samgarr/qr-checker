@@ -8,7 +8,7 @@ import cz.lhoracek.qrchecker.di.activity.ActivityModule;
 import cz.lhoracek.qrchecker.di.activity.DaggerActivityComponent;
 
 
-public class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity {
     private ActivityComponent activityComponent;
 
     public ActivityComponent getActivityComponent() {

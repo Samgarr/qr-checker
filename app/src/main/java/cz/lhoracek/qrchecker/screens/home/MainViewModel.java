@@ -7,6 +7,7 @@ import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
 import android.graphics.PointF;
+import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.view.MotionEvent;
@@ -18,11 +19,12 @@ import javax.inject.Inject;
 
 import cz.lhoracek.qrchecker.R;
 import cz.lhoracek.qrchecker.di.ActivityContext;
-import cz.lhoracek.qrchecker.screens.settings.ListActivity;
+import cz.lhoracek.qrchecker.screens.BaseViewModel;
+import cz.lhoracek.qrchecker.screens.list.ListActivity;
 import cz.lhoracek.qrchecker.util.SoundPoolPlayer;
 
 
-public class MainViewModel {
+public class MainViewModel extends BaseViewModel {
     ObservableField<PointF[]> points = new ObservableField<>();
     ObservableInt rotation = new ObservableInt(0);
     ObservableField<Boolean> valid = new ObservableField<>(true); // TODO remove
@@ -31,14 +33,17 @@ public class MainViewModel {
     private final Vibrator vibrator;
     private final SoundPoolPlayer soundPoolPlayer;
     private final Context activityContext;
+    private final AudioManager audioManager;
 
     @Inject
     public MainViewModel(Vibrator vibrator,
                          SoundPoolPlayer soundPoolPlayer,
-                         @ActivityContext Context activityContext) {
+                         @ActivityContext Context activityContext,
+                         AudioManager audioManager) {
         this.vibrator = vibrator;
         this.soundPoolPlayer = soundPoolPlayer;
         this.activityContext = activityContext;
+        this.audioManager = audioManager;
     }
 
     public ObservableField<PointF[]> getPoints() {
@@ -61,6 +66,7 @@ public class MainViewModel {
         return (v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
+                    soundPoolPlayer.playShortResource(R.raw.ok);
                     torch.set(true);
                     break;
                 case MotionEvent.ACTION_UP:
@@ -75,6 +81,9 @@ public class MainViewModel {
         return (text, points) -> {
             this.points.set(points);
             if (!text.equals(lastText)) {
+
+
+
                 // TODO update
                 valid.set(true);
                 vibrator.vibrate(250);
@@ -85,6 +94,11 @@ public class MainViewModel {
             handler.removeCallbacks(clearPoints);
             handler.postDelayed(clearPoints, 500);
         };
+    }
+
+    @Override
+    public void onCreate() {
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC),0);
     }
 
     public View.OnClickListener getFabListener(){

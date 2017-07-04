@@ -1,4 +1,4 @@
-package cz.lhoracek.qrchecker.screens.settings;
+package cz.lhoracek.qrchecker.screens.list;
 
 
 import android.app.Activity;
@@ -11,10 +11,11 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 
 import cz.lhoracek.qrchecker.di.ActivityContext;
+import cz.lhoracek.qrchecker.screens.BaseViewModel;
 import cz.lhoracek.qrchecker.util.Preferences;
 import cz.lhoracek.qrchecker.util.adapter.handler.ItemBinder;
 
-public class ListViewModel {
+public class ListViewModel extends BaseViewModel {
     private final Context activityContext;
     private final Preferences preferences;
 
@@ -25,11 +26,22 @@ public class ListViewModel {
         this.preferences = preferences;
     }
 
+    @Override
+    public void onCreate(){
+        if(preferences.getFilename() == null){
+            startFilePicker();
+        }
+    }
+
+    public void onOptionsItemSelected(){
+        startFilePicker();
+    }
+
     public void onFileSelected(String path) {
         // TODO
     }
 
-    public void onStartPicker() {
+    private void startFilePicker() {
         new MaterialFilePicker()
                 .withActivity((Activity) activityContext)
                 .withRequestCode(ListActivity.REQUEST_CODE)
