@@ -1,30 +1,19 @@
 package cz.lhoracek.qrchecker.screens.settings;
 
 
-import android.app.Activity;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.databinding.ObservableField;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.nbsp.materialfilepicker.MaterialFilePicker;
 import com.nbsp.materialfilepicker.ui.FilePickerActivity;
-import com.nbsp.materialfilepicker.utils.FileUtils;
 
-import java.io.File;
-import java.util.List;
-import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
-import java.util.zip.Checksum;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
-import cz.lhoracek.qrchecker.App;
 import cz.lhoracek.qrchecker.R;
 import cz.lhoracek.qrchecker.databinding.ActivitySettingsBinding;
 import cz.lhoracek.qrchecker.screens.BaseActivity;
@@ -55,13 +44,30 @@ public class SettingsActivity extends BaseActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.setting, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_save:
+                viewModel.onSave();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 String path = data.getStringExtra(FilePickerActivity.RESULT_FILE_PATH);
-
+                viewModel.onFileSelected(path);
             } else {
                 Timber.d("Canceled");
             }
