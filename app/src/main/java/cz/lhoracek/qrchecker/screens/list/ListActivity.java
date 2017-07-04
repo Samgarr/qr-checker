@@ -28,7 +28,12 @@ public class ListActivity extends BaseActivity {
         getActivityComponent().inject(this);
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_list);
-        viewModel.onCreate();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        viewModel.onStart();
     }
 
     @Override

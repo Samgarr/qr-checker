@@ -21,13 +21,12 @@ import javax.inject.Inject;
 
 import cz.lhoracek.qrchecker.R;
 import cz.lhoracek.qrchecker.di.ActivityContext;
-import cz.lhoracek.qrchecker.screens.BaseViewModel;
 import cz.lhoracek.qrchecker.screens.list.ListActivity;
 import cz.lhoracek.qrchecker.util.Preferences;
 import cz.lhoracek.qrchecker.util.SoundPoolPlayer;
 
 
-public class MainViewModel extends BaseViewModel {
+public class MainViewModel {
     ObservableField<PointF[]> points = new ObservableField<>();
     ObservableInt rotation = new ObservableInt(0);
     ObservableField<Boolean> valid = new ObservableField<>(true); // TODO remove
@@ -89,7 +88,6 @@ public class MainViewModel extends BaseViewModel {
             if (!text.equals(lastText)) {
 
 
-
                 // TODO update
                 valid.set(true);
                 vibrator.vibrate(250);
@@ -102,22 +100,21 @@ public class MainViewModel extends BaseViewModel {
         };
     }
 
-    @Override
     public void onCreate() {
-        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC),0);
-        if(preferences.getFilename() == null){
-           startFilePicker();
-        }else if(!new File(preferences.getFilename()).exists()){
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
+        if (preferences.getFilename() == null) {
+            startFilePicker();
+        } else if (!new File(preferences.getFilename()).exists()) {
             preferences.setFilename(null);
             startFilePicker();
         }
     }
 
-    private void startFilePicker(){
+    private void startFilePicker() {
         activityContext.startActivity(new Intent(activityContext, ListActivity.class));
     }
 
-    public View.OnClickListener getFabListener(){
+    public View.OnClickListener getFabListener() {
         return v -> startFilePicker();
     }
 

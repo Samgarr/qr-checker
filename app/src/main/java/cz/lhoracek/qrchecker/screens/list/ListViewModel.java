@@ -6,16 +6,16 @@ import android.content.Context;
 
 import com.nbsp.materialfilepicker.MaterialFilePicker;
 
+import java.io.File;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
 import cz.lhoracek.qrchecker.di.ActivityContext;
-import cz.lhoracek.qrchecker.screens.BaseViewModel;
 import cz.lhoracek.qrchecker.util.Preferences;
 import cz.lhoracek.qrchecker.util.adapter.handler.ItemBinder;
 
-public class ListViewModel extends BaseViewModel {
+public class ListViewModel {
     private final Context activityContext;
     private final Preferences preferences;
 
@@ -26,9 +26,11 @@ public class ListViewModel extends BaseViewModel {
         this.preferences = preferences;
     }
 
-    @Override
-    public void onCreate(){
+    public void onStart(){
         if(preferences.getFilename() == null){
+            startFilePicker();
+        }else if(!new File(preferences.getFilename()).exists()){
+            preferences.setFilename(null);
             startFilePicker();
         }
     }
@@ -38,7 +40,7 @@ public class ListViewModel extends BaseViewModel {
     }
 
     public void onFileSelected(String path) {
-        // TODO
+        preferences.setFilename(path);
     }
 
     private void startFilePicker() {
