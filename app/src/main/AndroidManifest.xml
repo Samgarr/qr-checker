@@ -17,8 +17,8 @@
         <activity
             android:name=".screens.home.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -28,7 +28,8 @@
 
         <activity
             android:name=".screens.settings.SettingsActivity"
-            android:label="@string/activity_settings"/>
+            android:label="@string/activity_settings"
+            android:parentActivityName=".screens.home.MainActivity"/>
     </application>
 
 </manifest>

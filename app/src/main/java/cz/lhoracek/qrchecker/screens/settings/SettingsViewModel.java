@@ -24,8 +24,12 @@ public class SettingsViewModel {
         // TODO
     }
 
-    public void onSave() {
+    public void onSelectFile() {
         // TODO
         ((Activity) activityContext).finish();
     }
+
+    // TODO viewBinder
+    // TODO list
+    // TODO click handler?
 }

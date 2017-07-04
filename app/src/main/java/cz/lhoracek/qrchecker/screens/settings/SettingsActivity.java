@@ -52,8 +52,8 @@ public class SettingsActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_save:
-                viewModel.onSave();
+            case R.id.action_pick_file:
+                viewModel.onSelectFile();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
