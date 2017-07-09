@@ -27,6 +27,7 @@ import cz.lhoracek.qrchecker.App;
 import cz.lhoracek.qrchecker.R;
 import cz.lhoracek.qrchecker.databinding.ActivityMainBinding;
 import cz.lhoracek.qrchecker.screens.BaseActivity;
+import cz.lhoracek.qrchecker.util.PermissionUtils;
 import timber.log.Timber;
 
 /**
@@ -38,12 +39,13 @@ public class MainActivity extends BaseActivity {
     private ActivityMainBinding binding;
 
     @Inject MainViewModel viewModel;
+    @Inject PermissionUtils permissionUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getActivityComponent().inject(this);
         super.onCreate(savedInstanceState);
-        checkPermission();
+        permissionUtils.checkPermissions();
         viewModel.onCreate();
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.setViewModel(viewModel);
@@ -58,21 +60,6 @@ public class MainActivity extends BaseActivity {
                 viewModel.getRotation().set(((orientation + 45) / 90) * 90);
             }
         }.enable();
-    }
-
-    private void checkPermission() {
-        MultiplePermissionsListener dialogMultiplePermissionsListener =
-                DialogOnAnyDeniedMultiplePermissionsListener.Builder
-                        .withContext(this)
-                        .withTitle(R.string.permission_title)
-                        .withMessage(R.string.permission_text)
-                        .withButtonText(android.R.string.ok)
-                        .withIcon(R.mipmap.ic_launcher)
-                        .build();
-
-        Dexter.withActivity(this)
-                .withPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .withListener(dialogMultiplePermissionsListener).check();
     }
 
     @Override

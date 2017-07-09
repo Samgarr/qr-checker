@@ -3,6 +3,9 @@ package cz.lhoracek.qrchecker.screens.list;
 
 import android.app.Activity;
 import android.content.Context;
+import android.databinding.ObservableArrayList;
+import android.databinding.ObservableList;
+import android.view.View;
 
 import com.nbsp.materialfilepicker.MaterialFilePicker;
 
@@ -13,11 +16,14 @@ import javax.inject.Inject;
 
 import cz.lhoracek.qrchecker.di.ActivityContext;
 import cz.lhoracek.qrchecker.util.Preferences;
+import cz.lhoracek.qrchecker.util.adapter.handler.ClickHandler;
 import cz.lhoracek.qrchecker.util.adapter.handler.ItemBinder;
 
 public class ListViewModel {
     private final Context activityContext;
     private final Preferences preferences;
+
+    private ObservableList<ItemViewModel> items = new ObservableArrayList<>();
 
     @Inject
     public ListViewModel(@ActivityContext Context activityContext,
@@ -26,16 +32,16 @@ public class ListViewModel {
         this.preferences = preferences;
     }
 
-    public void onStart(){
-        if(preferences.getFilename() == null){
+    public void onStart() {
+        if (preferences.getFilename() == null) {
             startFilePicker();
-        }else if(!new File(preferences.getFilename()).exists()){
+        } else if (!new File(preferences.getFilename()).exists()) {
             preferences.setFilename(null);
             startFilePicker();
         }
     }
 
-    public void onOptionsItemSelected(){
+    public void onOptionsItemSelected() {
         startFilePicker();
     }
 
@@ -57,6 +63,13 @@ public class ListViewModel {
         return null; // TODO
     }
 
-    // TODO list
-    // TODO click handler?
+    public ObservableList<ItemViewModel> getItems() {
+        return items;
+    }
+
+    public ClickHandler<ItemViewModel> getItemClickListener() {
+        return (viewModel, viewId) -> {
+            // TODO
+        };
+    }
 }
