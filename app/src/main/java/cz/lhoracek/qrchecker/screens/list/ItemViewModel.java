@@ -35,7 +35,7 @@ public class ItemViewModel extends BaseObservable {
         return checked;
     }
 
-    private void setChecked(boolean checked) {
+    public void setChecked(boolean checked) {
         this.checked = checked;
         notifyPropertyChanged(BR.checked);
     }

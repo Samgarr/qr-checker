@@ -22,7 +22,9 @@
             app:layoutManager="android.support.v7.widget.LinearLayoutManager"
             app:items="@{viewModel.items}"
             app:itemViewBinder="@{viewModel.itemBinder}"
-            app:clickHandler="@{viewModel.itemClickListener}"/>
+            app:clickHandler="@{viewModel.itemClickHandler}"
+            app:longClickHandler="@{viewModel.itemLongClickHandler}"
+            app:divider="@{@drawable/item_divider}"/>
 
     </android.support.design.widget.CoordinatorLayout>
 </layout>

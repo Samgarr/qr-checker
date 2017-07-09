@@ -20,7 +20,6 @@ public class ListActivity extends BaseActivity {
     public static final int REQUEST_CODE = 1;
 
     @Inject ListViewModel viewModel;
-
     ActivityListBinding binding;
 
     @Override
@@ -28,6 +27,7 @@ public class ListActivity extends BaseActivity {
         getActivityComponent().inject(this);
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_list);
+        binding.setViewModel(viewModel);
     }
 
     @Override

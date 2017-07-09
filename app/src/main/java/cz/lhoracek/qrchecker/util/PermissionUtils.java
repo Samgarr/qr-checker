@@ -21,7 +21,7 @@ public class PermissionUtils {
         this.activity = activity;
     }
 
-    public void checkPermissions(){
+    public void checkPermissions() {
         MultiplePermissionsListener dialogMultiplePermissionsListener =
                 DialogOnAnyDeniedMultiplePermissionsListener.Builder
                         .withContext(activity)
@@ -32,7 +32,7 @@ public class PermissionUtils {
                         .build();
 
         Dexter.withActivity(activity)
-                .withPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .withPermissions(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .withListener(dialogMultiplePermissionsListener).check();
     }
 }

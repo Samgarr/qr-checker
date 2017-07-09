@@ -1,2 +1,2 @@
-name;qrcode;checked
-John;1234568;false
+name,qrcode,checked,time
+John,1234568,false,

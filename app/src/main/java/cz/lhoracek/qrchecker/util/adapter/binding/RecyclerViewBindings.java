@@ -83,8 +83,6 @@ public abstract class RecyclerViewBindings extends BaseObservable {
                     ((LinearLayoutManager) recyclerView.getLayoutManager()).getOrientation());
             itemDivider.setDrawable(drawable);
 
-
-            //ItemDivider itemDivider = new ItemDivider(drawable);
             recyclerView.addItemDecoration(itemDivider);
         } else {
             throw new IllegalArgumentException("Divider has to be applied to linear layout managed recycler view.");

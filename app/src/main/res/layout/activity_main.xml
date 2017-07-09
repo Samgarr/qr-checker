@@ -53,6 +53,7 @@
             android:tint="@color/white"
             app:fabSize="normal"
             android:onClick="@{viewModel.fabListener}"
+            android:rotation="@{-viewModel.rotation}"
             app:srcCompat="@drawable/ic_list_24dp"/>
     </android.support.design.widget.CoordinatorLayout>
 </layout>

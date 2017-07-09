@@ -40,6 +40,7 @@ public class MainActivity extends BaseActivity {
 
     @Inject MainViewModel viewModel;
     @Inject PermissionUtils permissionUtils;
+    private OrientationEventListener orientationEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,25 +53,27 @@ public class MainActivity extends BaseActivity {
         initOrientationListener();
     }
 
-    private void initOrientationListener(){
-        new OrientationEventListener(this, SensorManager.SENSOR_DELAY_NORMAL) {
+    private void initOrientationListener() {
+        orientationEventListener = new OrientationEventListener(this, SensorManager.SENSOR_DELAY_NORMAL) {
             @Override
             public void onOrientationChanged(int orientation) {
                 Timber.d("Orientation changed %d", orientation);
                 viewModel.getRotation().set(((orientation + 45) / 90) * 90);
             }
-        }.enable();
+        };
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         viewModel.onResume();
+        orientationEventListener.enable();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         viewModel.onPause();
+        orientationEventListener.disable();
     }
 }

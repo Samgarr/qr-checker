@@ -7,6 +7,8 @@
 
         <import type="android.view.View"/>
 
+        <import type="java.text.SimpleDateFormat"/>
+
         <variable
             name="viewModel"
             type="cz.lhoracek.qrchecker.screens.list.ItemViewModel"/>
@@ -15,13 +17,39 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:padding="@dimen/spacing">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@{viewModel.checked ? @drawable/ic_check_24dp : @drawable/ic_cross_24dp}"
+            android:tint="@{viewModel.checked ? @color/green : @color/red}"
+            android:layout_marginEnd="@dimen/spacing"/>
 
-        <
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{viewModel.name, default=Name }"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{viewModel.qrCode}"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text='@{viewModel.checkedTime == null ? "" : SimpleDateFormat.getDateTimeInstance().format(viewModel.checkedTime)}'
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"/>
+        </LinearLayout>
     </LinearLayout>
 </layout>

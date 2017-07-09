@@ -15,21 +15,34 @@ import android.view.View;
 
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.inject.Inject;
 
 import cz.lhoracek.qrchecker.R;
 import cz.lhoracek.qrchecker.di.ActivityContext;
+import cz.lhoracek.qrchecker.screens.list.ItemViewModel;
 import cz.lhoracek.qrchecker.screens.list.ListActivity;
 import cz.lhoracek.qrchecker.util.Preferences;
 import cz.lhoracek.qrchecker.util.SoundPoolPlayer;
+import timber.log.Timber;
 
 
 public class MainViewModel {
+    private static final long[] PATTERN_FAIL = {250l, 100l, 250l, 100l, 250l};
+
     ObservableField<PointF[]> points = new ObservableField<>();
     ObservableInt rotation = new ObservableInt(0);
-    ObservableField<Boolean> valid = new ObservableField<>(true); // TODO remove
+    ObservableField<Boolean> valid = new ObservableField<>(null);
     ObservableBoolean torch = new ObservableBoolean(false);
 
     private final Vibrator vibrator;
@@ -86,12 +99,30 @@ public class MainViewModel {
         return (text, points) -> {
             this.points.set(points);
             if (!text.equals(lastText)) {
+                boolean found = false;
+                try {
+                    File csvData = new File(preferences.getFilename());
+                    CSVParser parser = CSVParser.parse(csvData, Charset.forName("UTF-8"), CSVFormat.EXCEL.withFirstRecordAsHeader());
 
+                    for (CSVRecord csvRecord : parser) {
+                        if (csvRecord.isSet("qrcode") && csvRecord.get("qrcode").equals(text)) {
+                            found = true;
+                            // TODO write back with updated fields
+                        }
+                    }
+                } catch (IOException e) {
+                    Timber.e(e);
+                }
 
-                // TODO update
-                valid.set(true);
-                vibrator.vibrate(250);
-                soundPoolPlayer.playShortResource(R.raw.ok);
+                if (found) {
+                    valid.set(true);
+                    vibrator.vibrate(250);
+                    soundPoolPlayer.playShortResource(R.raw.ok);
+                } else {
+                    valid.set(false);
+                    vibrator.vibrate(PATTERN_FAIL, -1);
+                    soundPoolPlayer.playShortResource(R.raw.fail);
+                }
                 handler.postDelayed(clearValid, 1000);
             }
             this.lastText = text;
@@ -101,7 +132,7 @@ public class MainViewModel {
     }
 
     public void onCreate() {
-        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
+        //audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
         if (preferences.getFilename() == null) {
             startFilePicker();
         } else if (!new File(preferences.getFilename()).exists()) {
