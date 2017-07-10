@@ -31,8 +31,8 @@ public class ListActivity extends BaseActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
         viewModel.onStart();
     }
 

@@ -41,7 +41,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="@{viewModel.valid == null ? View.VISIBLE : View.GONE}"
+                android:visibility="@{viewModel.valid == null ? View.GONE : View.VISIBLE}"
                 app:animateRotationTo="@{-viewModel.rotation}">
 
                 <ImageView

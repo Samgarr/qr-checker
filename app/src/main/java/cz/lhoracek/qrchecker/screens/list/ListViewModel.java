@@ -1,6 +1,7 @@
 package cz.lhoracek.qrchecker.screens.list;
 
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.databinding.ObservableArrayList;
@@ -11,6 +12,7 @@ import com.android.databinding.library.baseAdapters.BR;
 import com.nbsp.materialfilepicker.MaterialFilePicker;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Date;
 import java.util.regex.Pattern;
 
@@ -19,46 +21,45 @@ import javax.inject.Inject;
 import cz.lhoracek.qrchecker.R;
 import cz.lhoracek.qrchecker.di.ActivityContext;
 import cz.lhoracek.qrchecker.util.DataManager;
-import cz.lhoracek.qrchecker.util.PermissionUtils;
 import cz.lhoracek.qrchecker.util.Preferences;
 import cz.lhoracek.qrchecker.util.adapter.binder.ItemBinderBase;
 import cz.lhoracek.qrchecker.util.adapter.handler.ClickHandler;
 import cz.lhoracek.qrchecker.util.adapter.handler.ItemBinder;
 import cz.lhoracek.qrchecker.util.adapter.handler.LongClickHandler;
+import pub.devrel.easypermissions.EasyPermissions;
 import timber.log.Timber;
 
 public class ListViewModel {
-    private final Context activityContext;
+    private final Activity activityContext;
     private final Preferences preferences;
-    private final PermissionUtils permissionUtils;
     private final DataManager dataManager;
 
     private ObservableList<ItemViewModel> items = new ObservableArrayList<>();
 
     @Inject
-    public ListViewModel(@ActivityContext Context activityContext,
+    public ListViewModel(Activity activityContext,
                          Preferences preferences,
-                         PermissionUtils permissionUtils,
                          DataManager dataManager) {
         this.activityContext = activityContext;
         this.preferences = preferences;
-        this.permissionUtils = permissionUtils;
         this.dataManager = dataManager;
     }
 
     public void onStart() {
-        permissionUtils.checkPermissions();
-        if (preferences.getFilename() == null) {
-            //       startFilePicker();
-            return;
-        } else if (!new File(preferences.getFilename()).exists()) {
-            preferences.setFilename(null);
-            //     startFilePicker();
-            return;
+        if (!EasyPermissions.hasPermissions(activityContext, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            EasyPermissions.requestPermissions(activityContext, activityContext.getString(R.string.permission_text), 1, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        } else {
+            Collection<ItemViewModel> items = dataManager.getItems();
+            if (items == null) {
+                startFilePicker();
+            } else {
+                for (ItemViewModel item : items) {
+                    this.items.add(item);
+                }
+                Timber.d("Added %d items", items.size());
+            }
         }
 
-        items.addAll(dataManager.getItems());
-        Timber.d("Added %d items", items.size());
     }
 
     public void onOptionsItemSelected() {
@@ -75,8 +76,6 @@ public class ListViewModel {
                 .withActivity((Activity) activityContext)
                 .withRequestCode(ListActivity.REQUEST_CODE)
                 .withFilter(Pattern.compile(".*\\.csv$")) // Filtering files and directories by file name using regexp
-                //.withFilterDirectories(true) // Set directories filterable (false by default)
-                //.withHiddenFiles(true) // Show hidden files and folders
                 .withRootPath(Environment.getExternalStorageDirectory().getPath())
                 .start();
     }

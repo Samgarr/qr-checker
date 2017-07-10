@@ -35,8 +35,8 @@ import timber.log.Timber;
 
 
 public class MainViewModel {
-    private static final long[] PATTERN_FAIL = {250l, 100l, 250l, 100l, 250l};
-    private static final long[] PATTERN_ALREADY_VALIDATED = {500l, 100l, 200l, 100l, 550l};
+    private static final long[] PATTERN_FAIL = {0l, 200l, 150l, 200l, 150l, 200l};
+    private static final long[] PATTERN_ALREADY_VALIDATED = {0l, 500l, 100l, 400l, 100l, 400l};
 
     public enum CheckState {
         VALID,
@@ -136,7 +136,11 @@ public class MainViewModel {
 
                 }
                 valid.set(state);
+                handler.removeCallbacks(clearValid);
                 handler.postDelayed(clearValid, 1000);
+
+                handler.removeCallbacks(clearLastText);
+                handler.postDelayed(clearLastText, 5000);
             }
             this.lastText = text;
             handler.removeCallbacks(clearPoints);
@@ -146,10 +150,7 @@ public class MainViewModel {
 
     public void onCreate() {
         //audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
-        if (preferences.getFilename() == null) {
-            startFilePicker();
-        } else if (!new File(preferences.getFilename()).exists()) {
-            preferences.setFilename(null);
+        if (dataManager.getItems() == null) {
             startFilePicker();
         }
     }
@@ -165,6 +166,7 @@ public class MainViewModel {
     String lastText = null;
     Runnable clearPoints = () -> points.set(null);
     Runnable clearValid = () -> valid.set(null);
+    Runnable clearLastText = () -> lastText = null;
     Handler handler = new Handler();
 
     public void onResume() {

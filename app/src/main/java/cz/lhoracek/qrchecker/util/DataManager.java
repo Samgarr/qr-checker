@@ -24,6 +24,11 @@ import timber.log.Timber;
 
 public class DataManager {
 
+    private static final String ITEM_NAME = "name";
+    private static final String ITEM_QRCODE = "qrcode";
+    private static final String ITEM_CHECKED = "checked";
+    private static final String ITEM_TIME = "time";
+
     private final Preferences preferences;
 
     @Inject
@@ -33,6 +38,13 @@ public class DataManager {
 
 
     public Collection<ItemViewModel> getItems() {
+        if (preferences.getFilename() == null) {
+            return null;
+        } else if (!new File(preferences.getFilename()).exists()) {
+            preferences.setFilename(null);
+            return null;
+        }
+
         List<ItemViewModel> items = new ArrayList<>();
         File csvData = new File(preferences.getFilename());
         CSVParser parser = null;
@@ -45,15 +57,16 @@ public class DataManager {
         for (CSVRecord csvRecord : parser) {
             Date date = null;
             try {
-                date = csvRecord.get("time") == null || csvRecord.get("time").isEmpty() ? null : SimpleDateFormat.getDateTimeInstance().parse(csvRecord.get("time"));
+                date = csvRecord.get(ITEM_TIME) == null || csvRecord.get(ITEM_TIME).isEmpty() ? null : SimpleDateFormat.getDateTimeInstance().parse(csvRecord.get(ITEM_TIME));
             } catch (ParseException e) {
                 Timber.e(e);
             }
-            items.add(new ItemViewModel(csvRecord.get("name"),
-                    csvRecord.get("qrcode"),
-                    Boolean.valueOf(csvRecord.get("checked")),
-                    date)
-            );
+            String name = csvRecord.isSet(ITEM_NAME) ? csvRecord.get(ITEM_NAME) : null;
+            String qrcode = csvRecord.isSet(ITEM_QRCODE) ? csvRecord.get(ITEM_QRCODE) : null;
+            Boolean checked = csvRecord.isSet(ITEM_CHECKED) ? Boolean.valueOf(csvRecord.get(ITEM_CHECKED)) : null;
+
+            Timber.d("Parsed item %s, %s, %b, %s", name, qrcode, checked, date);
+            items.add(new ItemViewModel(name, qrcode, checked, date));
         }
 
         return items;
@@ -63,7 +76,7 @@ public class DataManager {
         try (FileWriter fileWriter = new FileWriter(preferences.getFilename());
              CSVPrinter csvPrinter = CSVFormat.EXCEL.withFirstRecordAsHeader().print(fileWriter)) {
 
-            Object[] FILE_HEADER = {"name", "qrcode", "checked", "time"};
+            Object[] FILE_HEADER = {ITEM_NAME, ITEM_QRCODE, ITEM_CHECKED, ITEM_TIME};
             csvPrinter.printRecord(FILE_HEADER);
 
             for (ItemViewModel item : items) {
