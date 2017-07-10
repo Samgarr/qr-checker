@@ -36,11 +36,6 @@ public class CustomBinders {
         view.setAutofocusInterval(intervalMillis);
     }
 
-    @BindingAdapter("touch")
-    public static void setTouchListener(View view, View.OnTouchListener listener) {
-        view.setOnTouchListener(listener);
-    }
-
     @BindingAdapter("layoutTransition")
     public static void bindLayoutTransition(ViewGroup view, LayoutTransition transition) {
         view.setLayoutTransition(transition);

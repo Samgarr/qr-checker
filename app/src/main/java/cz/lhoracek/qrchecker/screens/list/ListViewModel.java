@@ -10,17 +10,7 @@ import android.os.Environment;
 import com.android.databinding.library.baseAdapters.BR;
 import com.nbsp.materialfilepicker.MaterialFilePicker;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.CSVRecord;
-
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Pattern;
 
@@ -28,7 +18,7 @@ import javax.inject.Inject;
 
 import cz.lhoracek.qrchecker.R;
 import cz.lhoracek.qrchecker.di.ActivityContext;
-import cz.lhoracek.qrchecker.util.DateUtil;
+import cz.lhoracek.qrchecker.util.DataManager;
 import cz.lhoracek.qrchecker.util.PermissionUtils;
 import cz.lhoracek.qrchecker.util.Preferences;
 import cz.lhoracek.qrchecker.util.adapter.binder.ItemBinderBase;
@@ -41,16 +31,19 @@ public class ListViewModel {
     private final Context activityContext;
     private final Preferences preferences;
     private final PermissionUtils permissionUtils;
+    private final DataManager dataManager;
 
     private ObservableList<ItemViewModel> items = new ObservableArrayList<>();
 
     @Inject
     public ListViewModel(@ActivityContext Context activityContext,
                          Preferences preferences,
-                         PermissionUtils permissionUtils) {
+                         PermissionUtils permissionUtils,
+                         DataManager dataManager) {
         this.activityContext = activityContext;
         this.preferences = preferences;
         this.permissionUtils = permissionUtils;
+        this.dataManager = dataManager;
     }
 
     public void onStart() {
@@ -64,20 +57,7 @@ public class ListViewModel {
             return;
         }
 
-        try {
-            File csvData = new File(preferences.getFilename());
-            CSVParser parser = CSVParser.parse(csvData, Charset.forName("UTF-8"), CSVFormat.EXCEL.withFirstRecordAsHeader());
-            for (CSVRecord csvRecord : parser) {
-                Date date = csvRecord.get("time") == null || csvRecord.get("time").isEmpty() ? null : SimpleDateFormat.getDateTimeInstance().parse(csvRecord.get("time"));
-                items.add(new ItemViewModel(csvRecord.get("name"),
-                        csvRecord.get("qrcode"),
-                        Boolean.valueOf(csvRecord.get("checked")),
-                        date)
-                );
-            }
-        } catch (IOException | ParseException e) {
-            Timber.e(e);
-        }
+        items.addAll(dataManager.getItems());
         Timber.d("Added %d items", items.size());
     }
 
@@ -111,29 +91,15 @@ public class ListViewModel {
 
     public ClickHandler<ItemViewModel> getItemClickHandler() {
         return (viewModel, viewId) -> {
-            // TODO nothing
+            // TODO nothing so far
         };
     }
 
     public LongClickHandler<ItemViewModel> getItemLongClickHandler() {
         return viewModel -> {
-            try (FileWriter fileWriter = new FileWriter(preferences.getFilename());
-                 CSVPrinter csvPrinter = CSVFormat.EXCEL.withFirstRecordAsHeader().print(fileWriter)) {
-                viewModel.setChecked(!viewModel.isChecked());
-                viewModel.setCheckedTime(viewModel.isChecked() ? new Date() : null);
-
-
-                Object[] FILE_HEADER = {"name", "qrcode", "checked", "time"};
-                csvPrinter.printRecord(FILE_HEADER);
-
-                for (ItemViewModel item : items) {
-                    csvPrinter.printRecord(item.getName(), item.getQrCode(), item.isChecked(), DateUtil.formatDate(item.getCheckedTime()));
-                }
-
-                // TODO toggle
-            } catch (IOException e) {
-                Timber.e(e);
-            }
+            viewModel.setChecked(!viewModel.isChecked());
+            viewModel.setCheckedTime(viewModel.isChecked() ? new Date() : null);
+            dataManager.writeItems(items);
         };
     }
 }

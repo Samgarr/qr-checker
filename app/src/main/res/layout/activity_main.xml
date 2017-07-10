@@ -9,6 +9,8 @@
 
         <import type="android.animation.LayoutTransition"/>
 
+        <import type="cz.lhoracek.qrchecker.screens.home.MainViewModel.CheckState"/>
+
         <variable
             name="viewModel"
             type="cz.lhoracek.qrchecker.screens.home.MainViewModel"/>
@@ -36,14 +38,37 @@
                 android:layout_height="match_parent"
                 app:points="@{viewModel.points}"/>
 
-            <ImageView
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@{safeUnbox(viewModel.valid) ? @drawable/ic_check_24dp : @drawable/ic_cross_24dp}"
-                android:tint="@{safeUnbox(viewModel.valid) ? @color/green : @color/red}"
-                android:visibility="@{viewModel.valid != null ? View.VISIBLE : View.GONE}"
-                app:animateRotationTo="@{-viewModel.rotation}"
-                />
+                android:visibility="@{viewModel.valid == null ? View.VISIBLE : View.GONE}"
+                app:animateRotationTo="@{-viewModel.rotation}">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:tint="@color/green"
+                    android:visibility="@{viewModel.valid == CheckState.VALID ? View.VISIBLE : View.GONE}"
+                    app:srcCompat="@drawable/ic_check_24dp"
+                    />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:tint="@color/orange"
+                    android:visibility="@{viewModel.valid == CheckState.ALREADY_VALIDATED ? View.VISIBLE : View.GONE}"
+                    app:srcCompat="@drawable/ic_check_circle_24dp"
+                    />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:tint="@color/red"
+                    android:visibility="@{viewModel.valid == CheckState.INVALID ? View.VISIBLE : View.GONE}"
+                    app:srcCompat="@drawable/ic_cross_24dp"
+                    />
+            </FrameLayout>
+
 
         </FrameLayout>
 

@@ -15,15 +15,11 @@ import android.view.View;
 
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 
 import javax.inject.Inject;
@@ -32,6 +28,7 @@ import cz.lhoracek.qrchecker.R;
 import cz.lhoracek.qrchecker.di.ActivityContext;
 import cz.lhoracek.qrchecker.screens.list.ItemViewModel;
 import cz.lhoracek.qrchecker.screens.list.ListActivity;
+import cz.lhoracek.qrchecker.util.DataManager;
 import cz.lhoracek.qrchecker.util.Preferences;
 import cz.lhoracek.qrchecker.util.SoundPoolPlayer;
 import timber.log.Timber;
@@ -39,16 +36,24 @@ import timber.log.Timber;
 
 public class MainViewModel {
     private static final long[] PATTERN_FAIL = {250l, 100l, 250l, 100l, 250l};
+    private static final long[] PATTERN_ALREADY_VALIDATED = {500l, 100l, 200l, 100l, 550l};
+
+    public enum CheckState {
+        VALID,
+        INVALID,
+        ALREADY_VALIDATED,
+    }
 
     ObservableField<PointF[]> points = new ObservableField<>();
     ObservableInt rotation = new ObservableInt(0);
-    ObservableField<Boolean> valid = new ObservableField<>(null);
+    ObservableField<CheckState> valid = new ObservableField<>(null);
     ObservableBoolean torch = new ObservableBoolean(false);
 
     private final Vibrator vibrator;
     private final SoundPoolPlayer soundPoolPlayer;
     private final Context activityContext;
     private final AudioManager audioManager;
+    private final DataManager dataManager;
     private final Preferences preferences;
 
     @Inject
@@ -56,11 +61,13 @@ public class MainViewModel {
                          SoundPoolPlayer soundPoolPlayer,
                          @ActivityContext Context activityContext,
                          AudioManager audioManager,
+                         DataManager dataManager,
                          Preferences preferences) {
         this.vibrator = vibrator;
         this.soundPoolPlayer = soundPoolPlayer;
         this.activityContext = activityContext;
         this.audioManager = audioManager;
+        this.dataManager = dataManager;
         this.preferences = preferences;
     }
 
@@ -72,7 +79,7 @@ public class MainViewModel {
         return rotation;
     }
 
-    public ObservableField<Boolean> getValid() {
+    public ObservableField<CheckState> getValid() {
         return valid;
     }
 
@@ -84,7 +91,6 @@ public class MainViewModel {
         return (v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    soundPoolPlayer.playShortResource(R.raw.ok);
                     torch.set(true);
                     break;
                 case MotionEvent.ACTION_UP:
@@ -99,30 +105,37 @@ public class MainViewModel {
         return (text, points) -> {
             this.points.set(points);
             if (!text.equals(lastText)) {
-                boolean found = false;
-                try {
-                    File csvData = new File(preferences.getFilename());
-                    CSVParser parser = CSVParser.parse(csvData, Charset.forName("UTF-8"), CSVFormat.EXCEL.withFirstRecordAsHeader());
+                CheckState state = CheckState.INVALID;
 
-                    for (CSVRecord csvRecord : parser) {
-                        if (csvRecord.isSet("qrcode") && csvRecord.get("qrcode").equals(text)) {
-                            found = true;
-                            // TODO write back with updated fields
-                        }
+                Collection<ItemViewModel> items = dataManager.getItems();
+                for (ItemViewModel item : items) {
+                    if (text.equals(item.getQrCode())) {
+                        Timber.d("Found qrCode %s", text);
+                        state = item.isChecked() ? CheckState.ALREADY_VALIDATED : CheckState.VALID;
+                        item.setChecked(true);
+                        item.setCheckedTime(new Date());
                     }
-                } catch (IOException e) {
-                    Timber.e(e);
                 }
 
-                if (found) {
-                    valid.set(true);
-                    vibrator.vibrate(250);
-                    soundPoolPlayer.playShortResource(R.raw.ok);
-                } else {
-                    valid.set(false);
-                    vibrator.vibrate(PATTERN_FAIL, -1);
-                    soundPoolPlayer.playShortResource(R.raw.fail);
+                if (state == CheckState.VALID) {
+                    dataManager.writeItems(items);
                 }
+
+                switch (state) {
+                    case VALID:
+                        vibrator.vibrate(250);
+                        soundPoolPlayer.playShortResource(R.raw.ok);
+                        break;
+                    case INVALID:
+                        vibrator.vibrate(PATTERN_FAIL, -1);
+                        soundPoolPlayer.playShortResource(R.raw.fail);
+                        break;
+                    case ALREADY_VALIDATED:
+                        vibrator.vibrate(PATTERN_ALREADY_VALIDATED, -1);
+                        soundPoolPlayer.playShortResource(R.raw.fail);
+
+                }
+                valid.set(state);
                 handler.postDelayed(clearValid, 1000);
             }
             this.lastText = text;
@@ -163,5 +176,4 @@ public class MainViewModel {
         soundPoolPlayer.unloadSound(R.raw.ok);
         soundPoolPlayer.unloadSound(R.raw.fail);
     }
-
 }
