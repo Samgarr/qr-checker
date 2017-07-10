@@ -58,7 +58,17 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onOrientationChanged(int orientation) {
                 Timber.d("Orientation changed %d", orientation);
-                viewModel.getRotation().set(((orientation + 45) / 90) * 90);
+                int viewOrientation = viewModel.getRotation().get();
+
+                if (Math.abs(orientation - viewOrientation) < 75) {
+                    return; // adding some treshhold
+                }
+
+                int rotation = (((orientation + 45) / 90) * 90) % 360;
+                if (viewOrientation != rotation) {
+                    Timber.d("Updating orientation %d", rotation);
+                    viewModel.getRotation().set(rotation);
+                }
             }
         };
     }
